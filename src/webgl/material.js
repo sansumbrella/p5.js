@@ -189,6 +189,14 @@ p5.RendererGL.prototype._bind = function(tex, data){
   gl.bindTexture(gl.TEXTURE_2D, null);
 };
 
+p5.RendererGL.prototype.noFill = function() {
+  var gl = this._renderer.GL;
+  var shaderProgram =
+    this._renderer._getShader('lineVert', 'lineFrag');
+
+  gl.useProgram(shaderProgram);
+};
+
 /**
  * Checks whether val is a pot
  * more info on power of 2 here:
