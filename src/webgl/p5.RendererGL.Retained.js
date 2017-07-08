@@ -50,68 +50,39 @@ p5.RendererGL.prototype.createBuffers = function(gId, obj) {
     new Float32Array( vToNArray(obj.vertices) ),
     gl.STATIC_DRAW);
   //vertex position
-  shaderProgram.vertexPositionAttribute =
-    gl.getAttribLocation(shaderProgram, 'aPosition');
-  gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
-
-  gl.vertexAttribPointer(
-    shaderProgram.vertexPositionAttribute,
-    3, gl.FLOAT, false, 0, 0);
+  this._checkBuffers(shaderProgram, shaderProgram.vertexPositionAttribute,
+   'aPosition');
 
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.gHash[gId].indexBuffer);
   gl.bufferData(
     gl.ELEMENT_ARRAY_BUFFER,
     new Uint16Array( flatten(obj.faces) ),
     gl.STATIC_DRAW);
+  gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].normalBuffer);
+  gl.bufferData(
+    gl.ARRAY_BUFFER,
+    new Float32Array( vToNArray(obj.vertexNormals) ),
+    gl.STATIC_DRAW);
+  //vertex normal
+  this._checkBuffers(shaderProgram, shaderProgram.vertexNormalAttribute,
+   'aNormal');
 
-  switch (mId) {
-    case 'normalVert|normalFrag':
-    case 'lightVert|lightTextureFrag':
-      gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].normalBuffer);
-      gl.bufferData(
-        gl.ARRAY_BUFFER,
-        new Float32Array( vToNArray(obj.vertexNormals) ),
-        gl.STATIC_DRAW);
-      //vertex normal
-      shaderProgram.vertexNormalAttribute =
-        gl.getAttribLocation(shaderProgram, 'aNormal');
-      gl.enableVertexAttribArray(shaderProgram.vertexNormalAttribute);
-
-      gl.vertexAttribPointer(
-        shaderProgram.vertexNormalAttribute,
-        3, gl.FLOAT, false, 0, 0);
-
-      gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].uvBuffer);
-      gl.bufferData(
-        gl.ARRAY_BUFFER,
-        new Float32Array( flatten(obj.uvs) ),
-        gl.STATIC_DRAW);
-      //texture coordinate Attribute
-      shaderProgram.textureCoordAttribute =
-        gl.getAttribLocation(shaderProgram, 'aTexCoord');
-      gl.enableVertexAttribArray(shaderProgram.textureCoordAttribute);
-      gl.vertexAttribPointer(
-        shaderProgram.textureCoordAttribute,
-        2, gl.FLOAT, false, 0, 0);
-      break;
-    case 'wireframeVert|wireframeFrag':
-      //barycentric cooordinate Attribute
-      shaderProgram.barycentricCoordAttribute =
-        gl.getAttribLocation(shaderProgram, 'aBarycentric');
-      gl.enableVertexAttribArray(shaderProgram.barycentricCoordAttribute);
-      gl.vertexAttribPointer(
-        shaderProgram.barycentricCoordAttribute,
-        3, gl.FLOAT, false, 0, 0);
-
-      gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].barycentricBuffer);
-      gl.bufferData(
-        gl.ARRAY_BUFFER,
-        new Float32Array( flatten(obj.barycentric) ),
-        gl.STATIC_DRAW);
-      break;
-    default:
-      break;
-  }
+  gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].uvBuffer);
+  gl.bufferData(
+    gl.ARRAY_BUFFER,
+    new Float32Array( flatten(obj.uvs) ),
+    gl.STATIC_DRAW);
+  //texture coordinate Attribute
+  this._checkBuffers(shaderProgram, shaderProgram.textureCoordAttribute,
+    'aTexCoord');
+  //barycentric cooordinate Attribute
+  this._checkBuffers(shaderProgram, shaderProgram.barycentricCoordAttribute,
+    'aBarycentric');
+  gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].barycentricBuffer);
+  gl.bufferData(
+    gl.ARRAY_BUFFER,
+    new Float32Array( flatten(obj.barycentric) ),
+    gl.STATIC_DRAW);
 };
 
 /**
@@ -126,32 +97,50 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
   var shaderProgram = this.mHash[mId];
   //vertex position buffer
   gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].vertexBuffer);
-  gl.vertexAttribPointer(
+  if(shaderProgram.vertexPositionAttribute) {
+    gl.vertexAttribPointer(
     shaderProgram.vertexPositionAttribute,
     3, gl.FLOAT, false, 0, 0);
+  }
   //vertex index buffer
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.gHash[gId].indexBuffer);
   this._setMatrixUniforms(mId);
   switch (mId) {
-    case 'normalVert|normalFrag':
+    case 'normalVert|basicFrag':
     case 'lightVert|lightTextureFrag':
       //normal buffer
       gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].normalBuffer);
-      gl.vertexAttribPointer(
+      if(shaderProgram.vertexNormalAttribute) {
+        gl.vertexAttribPointer(
         shaderProgram.vertexNormalAttribute,
         3, gl.FLOAT, false, 0, 0);
+      } else {
+        this._checkBuffers(shaderProgram, shaderProgram.vertexNormalAttribute,
+          'aNormal');
+      }
+
       // uv buffer
       gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].uvBuffer);
-      gl.vertexAttribPointer(
+      if(shaderProgram.textureCoordinate) {
+        gl.vertexAttribPointer(
         shaderProgram.textureCoordAttribute,
         2, gl.FLOAT, false, 0, 0);
+      } else {
+        this._checkBuffers(shaderProgram, shaderProgram.textureCoordAttribute,
+          'aTexCoord');
+      }
       break;
     case 'wireframeVert|wireframeFrag':
       //barycentric buffer
       gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].barycentricBuffer);
-      gl.vertexAttribPointer(
+      if(shaderProgram.barycentricCoordAttribute) {
+        gl.vertexAttribPointer(
         shaderProgram.barycentricCoordAttribute,
         3, gl.FLOAT, false, 0, 0);
+      } else {
+        this._checkBuffers(shaderProgram, shaderProgram.barycentricCoordAttribute,
+          'aBarycentric');
+      }
       break;
     default:
       break;
@@ -159,6 +148,19 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
   gl.drawElements(
     gl.TRIANGLES, this.gHash[gId].numberOfItems,
     gl.UNSIGNED_SHORT, 0);
+  return this;
+};
+
+p5.RendererGL.prototype._checkBuffers = function(shaderProgram, attribLoc,
+  attribName) {
+  var gl = this.GL;
+  attribLoc = gl.getAttribLocation(shaderProgram, attribName);
+  if(attribLoc !== -1) {
+    gl.enableVertexAttribArray(attribLoc);
+    gl.vertexAttribPointer(
+    attribLoc,
+    3, gl.FLOAT, false, 0, 0);
+  }
   return this;
 };
 ///////////////////////////////

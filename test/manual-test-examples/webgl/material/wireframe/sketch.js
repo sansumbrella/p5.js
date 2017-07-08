@@ -8,7 +8,7 @@ function setup() {
 
 function draw() {
   background(0);
-  for(var i = -20; i < 20; i++){
+  for(var i = -5; i < 5; i++){
     push();
     stroke(0,200,0);
     noFill();
