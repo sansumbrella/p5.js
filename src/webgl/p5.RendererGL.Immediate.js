@@ -76,7 +76,7 @@ function(mode, isCurve, isBezier,isQuadratic, isContour, shapeKind){
     this.immediateMode.vertexPositions,
     this.immediateMode.vertexColors);
   if(mode){
-    if(this.drawMode === 'fill' || this.drawMode ==='texture'){
+    if(this.drawMode === constants.FILL || this.drawMode === constants.TEXTURE){
       switch(this.immediateMode.shapeMode){
         case constants.LINE_STRIP:
           this.immediateMode.shapeMode = constants.TRIANGLE_FAN;

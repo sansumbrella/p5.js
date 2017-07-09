@@ -3,6 +3,7 @@
 'use strict';
 
 var p5 = require('../core/core');
+var constants = require('../core/constants');
 var hashCount = 0;
 /**
  * _initBufferDefaults
@@ -121,7 +122,7 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
     default:
       break;
   }
-  if(this.drawMode === 'wireframe') {
+  if(this.drawMode === constants.WIREFRAME) {
     this._drawElements(gl.LINES, gId);
   } else {
     this._drawElements(gl.TRIANGLES, gId);

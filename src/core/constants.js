@@ -185,6 +185,9 @@ module.exports = {
   SOFT_LIGHT: 'soft-light',
   DODGE: 'color-dodge',
   BURN: 'color-burn',
+  WIREFRAME: 'wireframe',
+  FILL: 'fill',
+  TEXTURE: 'texture',
 
   // FILTERS
   THRESHOLD: 'threshold',

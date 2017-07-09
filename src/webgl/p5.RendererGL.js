@@ -1,6 +1,7 @@
 'use strict';
 
 var p5 = require('../core/core');
+var constants = require('../core/constants');
 var shader = require('./shader');
 require('../core/p5.Renderer');
 require('./p5.Matrix');
@@ -16,6 +17,7 @@ var attributes = {
   premultipliedAlpha: false,
   preserveDrawingBuffer: false
 };
+
 
 /**
  * 3D graphics class
@@ -257,13 +259,13 @@ p5.RendererGL.prototype._getShader = function(vertId, fragId, isImmediateMode) {
 
 p5.RendererGL.prototype._getCurShaderId = function(){
   //if the shader ID is not yet defined
-  if(this.drawMode !== 'fill' && this.curShaderId === undefined){
+  if(this.drawMode !== constants.FILL && this.curShaderId === undefined){
     //default shader: normalMaterial()
     var mId = 'normalVert|normalFrag';
     var shaderProgram = this._initShaders('normalVert', 'normalFrag');
     this.mHash[mId] = shaderProgram;
     this.curShaderId = mId;
-  } else if(this.isImmediateDrawing && this.drawMode === 'fill'){
+  } else if(this.isImmediateDrawing && this.drawMode === constants.FILL){
     // note that this._getShader will check if the shader already exists
     // by looking up the shader id (composed of vertexShaderId|fragmentShaderId)
     // in the material hash. If the material isn't found in the hash, it
@@ -317,7 +319,7 @@ p5.RendererGL.prototype.fill = function(v1, v2, v3, a) {
   //see material.js for more info on color blending in webgl
   var colors = this._applyColorBlend.apply(this, arguments);
   this.curFillColor = colors;
-  this.drawMode = 'fill';
+  this.drawMode = constants.FILL;
   if(this.isImmediateDrawing){
     shaderProgram =
     this._getShader('immediateVert','vertexColorFrag');
@@ -347,7 +349,7 @@ p5.RendererGL.prototype.noFill = function() {
   gl.enable(gl.BLEND);
   gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
   gl.useProgram(shaderProgram);
-  this.drawMode = 'wireframe';
+  this.drawMode = constants.WIREFRAME;
   if(this.curStrokeColor) {
     this._setNoFillStroke();
   }
@@ -358,7 +360,7 @@ p5.RendererGL.prototype.stroke = function(r, g, b, a) {
   var color = this._pInst.color.apply(this._pInst, arguments);
   var colorNormalized = color._array;
   this.curStrokeColor = colorNormalized;
-  if(this.drawMode === 'wireframe') {
+  if(this.drawMode === constants.WIREFRAME) {
     this._setNoFillStroke();
   }
   return this;
