@@ -20,6 +20,8 @@ p5.Geometry = function
   //an array containing every vertex
   //@type [p5.Vector]
   this.vertices = [];
+  //an array for storing the vertices for lines
+  this.lineVertices = [];
   //an array containing 1 normal per vertex
   //@type [p5.Vector]
   //[p5.Vector, p5.Vector, p5.Vector,p5.Vector, p5.Vector, p5.Vector,...]
@@ -30,8 +32,10 @@ p5.Geometry = function
   //a 2D array containing uvs for every vertex
   //[[0.0,0.0],[1.0,0.0], ...]
   this.uvs = [];
-  //an array containing barycentric coords for every vertex
-  this.barycentric = [];
+  //a 2D array containing triangle edge information
+  //with the closing edge having a true bool in index 2
+  //[[vert1, vert2], [vert2, vert3], [vert3, vert1, true]]
+  this.edges = []
   this.detailX = (detailX !== undefined) ? detailX: 1;
   this.detailY = (detailY !== undefined) ? detailY: 1;
   if(callback instanceof Function){
@@ -142,6 +146,36 @@ p5.Geometry.prototype.averagePoleNormals = function() {
   for(i = this.vertices.length - 1;
     i > this.vertices.length - 1 - this.detailX; i--){
     this.vertexNormals[i] = sum;
+  }
+  return this;
+};
+
+p5.Geometry.prototype._makeTriangleEdges = function() {
+  for(var i = 0; i < this.vertices.length; i+=3) {
+    var i0 = i+0;
+    var i1 = i+1;
+    var i2 = i+2;
+
+    this.edges[i] = [i0, i1, false];
+    this.edges[i+1] = [i1, i2, false];
+    this.edges[i+2] = [i2, i0, true];
+  }
+  return this;
+};
+
+p5.Geometry.prototype._edgesToVertices = function() {
+  var lineInd = 0;
+  for(var i = 0; i < this.edges.length; i++)
+  {
+    this.lineVertices[i] = [];
+    this.lineVertices[i][0] = this.vertices[this.edges[i][0]];
+    this.lineVertices[i][0].x += 5; //these lines are just for early testing
+    this.lineVertices[i][1] = this.vertices[this.edges[i][0]];
+    this.lineVertices[i][1].x -= 5;
+    this.lineVertices[i][2] = this.vertices[this.edges[i][1]];
+    this.lineVertices[i][2].x += 5;
+    this.lineVertices[i][3] = this.vertices[this.edges[i][1]];
+    this.lineVertices[i][3].x -= 5;
   }
   return this;
 };

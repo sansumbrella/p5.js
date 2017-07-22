@@ -25,6 +25,7 @@ p5.RendererGL.prototype._initBufferDefaults = function(gId) {
   this.gHash[gId].normalBuffer = gl.createBuffer();
   this.gHash[gId].uvBuffer = gl.createBuffer();
   this.gHash[gId].indexBuffer = gl.createBuffer();
+  this.gHash[gId].lineVertexBuffer = gl.createBuffer();
 };
 
 /**

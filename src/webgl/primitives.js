@@ -158,6 +158,11 @@ p5.prototype.box = function(){
     var boxGeom = new p5.Geometry(detailX,detailY, _box);
     boxGeom
       .computeNormals();
+      boxGeom._makeTriangleEdges();
+      boxGeom._edgesToVertices();
+      //FOR TESTING
+      console.log(boxGeom.edges);
+      console.log(boxGeom.lineVertices);
     //initialize our geometry buffer with
     //the key val pair:
     //geometry Id, Geom object
