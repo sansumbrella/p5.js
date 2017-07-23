@@ -10,7 +10,7 @@ function setup() {
 
 function draw() {
   stroke(0);
-  noFill();
+  fill(0);
   rotateX(frameCount * 0.01);
   box(75);
 }

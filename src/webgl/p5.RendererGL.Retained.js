@@ -47,10 +47,10 @@ p5.RendererGL.prototype.createBuffers = function(gId, obj) {
   var shader = this.mHash[mId];
 
   // allocate space for vertex positions
-  var data = new Float32Array(vToNArray(obj.vertices));
+  var data = new Float32Array(flatten(obj.lineVertices));
   shader.enableAttrib(shader.attributes.aPosition.location,
     3, gl.FLOAT, false, 0, 0);
-  gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].vertexBuffer);
+  gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].lineVertexBuffer);
   gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
 
   // allocate space for faces
@@ -87,7 +87,7 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
   shader.bind();
 
   //vertex position buffer
-  gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].vertexBuffer);
+  gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].lineVertexBuffer);
   shader.enableAttrib(shader.attributes.aPosition.location,
     3, gl.FLOAT, false, 0, 0);
   //vertex index buffer
@@ -113,7 +113,7 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
   if(this.drawMode === 'wireframe') {
     this._drawElements(gl.LINES, gId);
   } else {
-    this._drawElements(gl.TRIANGLES, gId);
+    this._drawElements(gl.QUADS, gId);
   }
   shader.unbind();
   return this;
