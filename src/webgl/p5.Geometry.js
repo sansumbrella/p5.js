@@ -168,14 +168,14 @@ p5.Geometry.prototype._edgesToVertices = function() {
   for(var i = 0; i < this.edges.length; i++)
   {
     this.lineVertices[i] = [];
-    this.lineVertices[i][0] = this.vertices[this.edges[i][0]];
-    this.lineVertices[i][0].x += 5; //these lines are just for early testing
-    this.lineVertices[i][1] = this.vertices[this.edges[i][0]];
-    this.lineVertices[i][1].x -= 5;
-    this.lineVertices[i][2] = this.vertices[this.edges[i][1]];
-    this.lineVertices[i][2].x += 5;
-    this.lineVertices[i][3] = this.vertices[this.edges[i][1]];
-    this.lineVertices[i][3].x -= 5;
+    this.lineVertices[i][0] = this.vertices[this.edges[i][0]].array();
+    this.lineVertices[i][0][0] += 5; //these lines are just for early testing
+    this.lineVertices[i][1] = this.vertices[this.edges[i][0]].array();
+    this.lineVertices[i][1][0] -= 5;
+    this.lineVertices[i][2] = this.vertices[this.edges[i][1]].array();
+    this.lineVertices[i][2][0] += 5;
+    this.lineVertices[i][3] = this.vertices[this.edges[i][1]].array();
+    this.lineVertices[i][3][0] -= 5;
   }
   return this;
 };

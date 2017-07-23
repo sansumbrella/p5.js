@@ -161,6 +161,7 @@ p5.prototype.box = function(){
       boxGeom._makeTriangleEdges();
       boxGeom._edgesToVertices();
       //FOR TESTING
+      console.log(boxGeom.vertices);
       console.log(boxGeom.edges);
       console.log(boxGeom.lineVertices);
     //initialize our geometry buffer with
