@@ -327,6 +327,7 @@ p5.RendererGL.prototype._applyColorBlend = function(v1,v2,v3,a){
   var colors = color._array;
   if(colors[colors.length-1] < 1.0){
     gl.depthMask(false);
+    gl.depthFunc(gl.ALWAYS);
     gl.enable(gl.BLEND);
     gl.blendEquation( gl.FUNC_ADD );
     gl.blendFunc( gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA );
